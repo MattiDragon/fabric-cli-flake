@@ -7,14 +7,18 @@
     let
       forAllSys = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.all;
     in {
+      overlays.default = final: prev: {
+        fabricmc-cli = prev.callPackage ./. {};
+      };
+
       packages = forAllSys (system: let
-        pkgs = import nixpkgs { inherit system; };
-        fabricmc-cli = pkgs.callPackage ./. {
-          inherit pkgs;
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ self.overlays.default ];
         };
       in {
-        inherit fabricmc-cli;
-        default = fabricmc-cli;
+        inherit (pkgs) fabricmc-cli;
+        default = pkgs.fabricmc-cli;
       });
     };
 
