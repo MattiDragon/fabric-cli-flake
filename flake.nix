@@ -20,6 +20,13 @@
         inherit (pkgs) fabricmc-cli;
         default = pkgs.fabricmc-cli;
       });
+
+      apps = forAllSys (system: {
+        default = {
+          type = "app";
+          program = "${self.packages.${system}.default}/bin/fabric";
+        };
+      });
     };
 
 }
